@@ -33,7 +33,7 @@ Clone this repository, import dependencies, install dependencies and build with 
 
 ```bash
 # Clone this repository into your favourite ROS 2 workspace
-git clone https://github.com/AndrejOrsula/panda_ign_moveit2.git
+git clone https://github.com/pavmarko/panda_ign_moveit2.git
 # Import dependencies
 vcs import < panda_ign_moveit2/panda_ign_moveit2.repos
 # Install dependencies
