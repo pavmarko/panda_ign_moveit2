@@ -75,6 +75,7 @@
     gazebo_spring_stiffness:=0.0
     gazebo_spring_reference:=0.0
     gazebo_preserve_fixed_joint:=false
+    gazebo_add_FT_sensor:=false
   ">
     <!-- Make sure limits are set for non-fixed joints -->
     <xacro:unless value="${joint_type == 'fixed'}">
@@ -117,6 +118,22 @@
       </xacro:unless>
     </joint>
 
+    <!-- Force Torque sensor in each joint -->
+    <xacro:if value="${gazebo_add_FT_sensor}">
+      <gazebo reference="${joint_name}">
+        <sensor name="${joint_name}_FT" type="force_torque">
+          <always_on>true</always_on>
+          <update_rate>20.0</update_rate>
+          <visualize>true</visualize>
+          <topic>${joint_name}_FT</topic>
+          <force_torque>
+            <frame>sensor</frame>
+            <measure_direction>parent_to_child</measure_direction>
+          </force_torque>
+        </sensor>
+      </gazebo>
+    </xacro:if>
+
     <!-- Transmission for non-fixed joints -->
     <xacro:unless value="${joint_type == 'fixed'}">
       <transmission name="${joint_name}_transmission">
@@ -142,7 +159,7 @@
     <xacro:if value="${joint_type == 'fixed' and gazebo_preserve_fixed_joint}">
       <gazebo reference="${joint_name}">
         <preserveFixedJoint>true</preserveFixedJoint>
-        <disableFixedJointLumping>true</disableFixedJointLumping>
+        <!--<disableFixedJointLumping>true</disableFixedJointLumping>-->
       </gazebo>
     </xacro:if>
   </xacro:macro>
@@ -157,6 +174,7 @@
     joint_origin_xyz
     joint_origin_rpy
     gazebo_preserve_fixed_joint:=false
+    gazebo_add_FT_sensor:=false
   ">
     <xacro:panda_dummy_link
       link_name="${link_name}"
@@ -168,6 +186,20 @@
       <child link="${link_name}"/>
       <origin xyz="${joint_origin_xyz}" rpy="${joint_origin_rpy}"/>
     </joint>
+    <xacro:if value="${gazebo_add_FT_sensor}">
+      <gazebo reference="${link_name}_virtual_joint">
+        <sensor name="${link_name}_FT" type="force_torque">
+          <always_on>true</always_on>
+          <update_rate>20.0</update_rate>
+          <visualize>true</visualize>
+          <topic>${link_name}_FT</topic>
+          <force_torque>
+            <frame>sensor</frame>
+            <measure_direction>parent_to_child</measure_direction>
+          </force_torque>
+        </sensor>
+      </gazebo>
+    </xacro:if>
   </xacro:macro>
 
 
@@ -191,7 +223,7 @@
     <xacro:if value="${gazebo_preserve_fixed_joint}">
       <gazebo reference="${link_name}_virtual_joint">
         <preserveFixedJoint>true</preserveFixedJoint>
-        <disableFixedJointLumping>true</disableFixedJointLumping>
+        <!--<disableFixedJointLumping>true</disableFixedJointLumping>-->
       </gazebo>
     </xacro:if>
   </xacro:macro>

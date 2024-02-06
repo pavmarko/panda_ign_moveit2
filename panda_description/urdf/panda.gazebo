@@ -15,4 +15,11 @@
     </gazebo>
   </xacro:macro>
 
+  <!-- Joint State Broadcaster -->
+  <gazebo>
+    <plugin filename="ignition-gazebo-joint-state-publisher-system"
+        name ="ignition::gazebo::systems::JointStatePublisher">
+    </plugin>
+  </gazebo>
+
 </robot>

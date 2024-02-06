@@ -609,6 +609,16 @@
           </limit>
         </ode>
       </physics>
+      <sensor name='panda_finger_joint1_FT' type='force_torque'>
+        <always_on>true</always_on>
+        <update_rate>20</update_rate>
+        <visualize>true</visualize>
+        <topic>panda_finger_joint1_FT</topic>
+        <force_torque>
+          <frame>sensor</frame>
+          <measure_direction>parent_to_child</measure_direction>
+        </force_torque>
+      </sensor>
     </joint>
     <link name='panda_leftfinger'>
       <pose relative_to='panda_finger_joint1'>0 0 0 0 0 0</pose>
@@ -654,6 +664,55 @@
         </geometry>
       </visual>
     </link>
+    <joint name='panda_leftfingertip_virtual_joint' type='fixed'>
+      <pose relative_to='panda_leftfinger'>0 0 0.045 0 0 0</pose>
+      <parent>panda_leftfinger</parent>
+      <child>panda_leftfingertip</child>
+      <axis>
+        <dynamics>
+          <spring_reference>0</spring_reference>
+          <spring_stiffness>0</spring_stiffness>
+        </dynamics>
+        <xyz>0 0 1</xyz>
+        <limit>
+          <lower>-10000000000000000</lower>
+          <upper>10000000000000000</upper>
+        </limit>
+      </axis>
+      <physics>
+        <ode>
+          <limit>
+            <cfm>0</cfm>
+            <erp>0.20000000000000001</erp>
+          </limit>
+        </ode>
+      </physics>
+      <sensor name='panda_leftfingertip_FT' type='force_torque'>
+        <always_on>true</always_on>
+        <update_rate>20</update_rate>
+        <visualize>true</visualize>
+        <topic>panda_leftfingertip_FT</topic>
+        <force_torque>
+          <frame>sensor</frame>
+          <measure_direction>parent_to_child</measure_direction>
+        </force_torque>
+      </sensor>
+    </joint>
+    <link name='panda_leftfingertip'>
+      <pose relative_to='panda_leftfingertip_virtual_joint'>0 0 0 0 0 0</pose>
+      <inertial>
+        <pose>0 0 0 0 0 0</pose>
+        <mass>1.0000000000000001e-05</mass>
+        <inertia>
+          <ixx>1e-35</ixx>
+          <ixy>0</ixy>
+          <ixz>0</ixz>
+          <iyy>1e-35</iyy>
+          <iyz>0</iyz>
+          <izz>1e-35</izz>
+        </inertia>
+      </inertial>
+    </link>
     <joint name='panda_finger_joint2' type='prismatic'>
       <pose relative_to='panda_link7'>0 0 0.1654 0 0 -0.7853981633974484</pose>
       <parent>panda_link7</parent>
@@ -681,6 +740,16 @@
           </limit>
         </ode>
       </physics>
+      <sensor name='panda_finger_joint2_FT' type='force_torque'>
+        <always_on>true</always_on>
+        <update_rate>20</update_rate>
+        <visualize>true</visualize>
+        <topic>panda_finger_joint2_FT</topic>
+        <force_torque>
+          <frame>sensor</frame>
+          <measure_direction>parent_to_child</measure_direction>
+        </force_torque>
+      </sensor>
     </joint>
     <link name='panda_rightfinger'>
       <pose relative_to='panda_finger_joint2'>0 0 0 0 0 0</pose>
@@ -726,9 +795,70 @@
         </geometry>
       </visual>
     </link>
-    <static>false</static>
+    <joint name='panda_rightfingertip_virtual_joint' type='fixed'>
+      <pose relative_to='panda_rightfinger'>0 0 0.045 0 0 0</pose>
+      <parent>panda_rightfinger</parent>
+      <child>panda_rightfingertip</child>
+      <axis>
+        <dynamics>
+          <spring_reference>0</spring_reference>
+          <spring_stiffness>0</spring_stiffness>
+        </dynamics>
+        <xyz>0 0 1</xyz>
+        <limit>
+          <lower>-10000000000000000</lower>
+          <upper>10000000000000000</upper>
+        </limit>
+      </axis>
+      <physics>
+        <ode>
+          <limit>
+            <cfm>0</cfm>
+            <erp>0.20000000000000001</erp>
+          </limit>
+        </ode>
+      </physics>
+      <sensor name='panda_rightfingertip_FT' type='force_torque'>
+        <always_on>true</always_on>
+        <update_rate>20</update_rate>
+        <visualize>true</visualize>
+        <topic>panda_rightfingertip_FT</topic>
+        <force_torque>
+          <frame>sensor</frame>
+          <measure_direction>parent_to_child</measure_direction>
+        </force_torque>
+      </sensor>
+    </joint>
+    <link name='panda_rightfingertip'>
+      <pose relative_to='panda_rightfingertip_virtual_joint'>0 0 0 0 0 0</pose>
+      <inertial>
+        <pose>0 0 0 0 0 0</pose>
+        <mass>1.0000000000000001e-05</mass>
+        <inertia>
+          <ixx>1e-35</ixx>
+          <ixy>0</ixy>
+          <ixz>0</ixz>
+          <iyy>1e-35</iyy>
+          <iyz>0</iyz>
+          <izz>1e-35</izz>
+        </inertia>
+      </inertial>
+    </link>
+    <plugin name='ignition::gazebo::systems::JointStatePublisher' filename='ignition-gazebo-joint-state-publisher-system'/>
     <plugin name='ign_ros2_control::IgnitionROS2ControlPlugin' filename='ign_ros2_control-system'>
-      <parameters>/home/andrej/ws/code/repos/panda_ign_moveit2/install/share/panda_moveit_config/config/controllers_effort.yaml</parameters>
+      <parameters>/home/marko/ws_moveit/install/panda_moveit_config/share/panda_moveit_config/config/controllers_effort.yaml</parameters>
     </plugin>
+    <frame name='panda_hand_tcp_virtual_joint' attached_to='panda_hand'>
+      <pose>0 0 0.1034 0 -0 0</pose>
+    </frame>
+    <frame name='panda_hand_tcp' attached_to='panda_hand_tcp_virtual_joint'/>
+    <frame name='panda_joint_wrist' attached_to='panda_link8'>
+      <pose>0 0 0 0 -0 0</pose>
+    </frame>
+    <frame name='panda_hand' attached_to='panda_joint_wrist'/>
+    <frame name='panda_link8_virtual_joint' attached_to='panda_link7'>
+      <pose>0 0 0.107 0 0 -0.785398</pose>
+    </frame>
+    <frame name='panda_link8' attached_to='panda_link8_virtual_joint'/>
   </model>
 </sdf>

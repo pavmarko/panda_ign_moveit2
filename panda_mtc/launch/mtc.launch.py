@@ -1,9 +1,5 @@
-#!/usr/bin/env -S ros2 launch
-"""Configure and setup move group for planning with MoveIt 2"""
-
 from os import path
 from typing import List
-
 import yaml
 from ament_index_python.packages import get_package_share_directory
 from launch import LaunchDescription
@@ -18,7 +14,6 @@ from launch.substitutions import (
 )
 from launch_ros.actions import Node
 from launch_ros.substitutions import FindPackageShare
-
 
 def generate_launch_description():
     # Declare all launch arguments
@@ -136,14 +131,6 @@ def generate_launch_description():
         )
     }
 
-    # Servo
-    servo_params = {
-        "moveit_servo": load_yaml(
-            moveit_config_package, path.join("config", "servo.yaml")
-        )
-    }
-    servo_params["moveit_servo"].update({"use_gazebo": use_sim_time})
-
     # Planning pipeline
     planning_pipeline = {
         "planning_pipelines": ["ompl"],
@@ -202,126 +189,26 @@ def generate_launch_description():
         ]
     )
 
-    # List of nodes to be launched
-    nodes = [
-        # robot_state_publisher
-        Node(
-            package="robot_state_publisher",
-            executable="robot_state_publisher",
-            output="log",
-            arguments=["--ros-args", "--log-level", log_level],
-            parameters=[
-                robot_description,
-                {
-                    "publish_frequency": 50.0,
-                    "frame_prefix": "",
-                    "use_sim_time": use_sim_time,
-                },
-            ],
-        ),
-        # ros2_control_node (only for fake controller)
-        Node(
-            package="controller_manager",
-            executable="ros2_control_node",
-            output="log",
-            arguments=["--ros-args", "--log-level", log_level],
-            parameters=[
-                robot_description,
-                controller_parameters,
-                {"use_sim_time": use_sim_time},
-            ],
-            condition=(
-                IfCondition(
-                    PythonExpression(
-                        [
-                            "'",
-                            ros2_control_plugin,
-                            "'",
-                            " == ",
-                            "'fake'",
-                        ]
-                    )
-                )
-            ),
-        ),
-        # move_group (with execution)
-        Node(
-            package="moveit_ros_move_group",
-            executable="move_group",
-            output="log",
-            arguments=["--ros-args", "--log-level", log_level],
-            parameters=[
-                robot_description,
-                robot_description_semantic,
-                kinematics,
-                joint_limits,
-                planning_pipeline,
-                trajectory_execution,
-                planning_scene_monitor_parameters,
-                moveit_controller_manager,
-                {"use_sim_time": use_sim_time},
-            ],
-        ),
-        # move_servo
-        Node(
-            package="moveit_servo",
-            executable="servo_node_main",
-            output="log",
-            arguments=["--ros-args", "--log-level", log_level],
-            parameters=[
-                robot_description,
-                robot_description_semantic,
-                kinematics,
-                joint_limits,
-                planning_pipeline,
-                trajectory_execution,
-                planning_scene_monitor_parameters,
-                servo_params,
-                {"use_sim_time": use_sim_time},
-            ],
-            condition=IfCondition(enable_servo),
-        ),
-        # rviz2
-        Node(
-            package="rviz2",
-            executable="rviz2",
-            output="log",
-            arguments=[
-                "--display-config",
-                rviz_config,
-                "--ros-args",
-                "--log-level",
-                log_level,
-            ],
-            parameters=[
-                robot_description,
-                robot_description_semantic,
-                kinematics,
-                planning_pipeline,
-                joint_limits,
-                {"use_sim_time": use_sim_time},
-            ],
-            condition=IfCondition(enable_rviz),
-        ),
-    ]
 
-    # Add nodes for loading controllers
-    for controller in moveit_controller_manager_yaml["controller_names"] + [
-        "joint_state_broadcaster"
-    ]:
-        nodes.append(
-            # controller_manager_spawner
-            Node(
-                package="controller_manager",
-                executable="spawner",
-                output="log",
-                arguments=[controller, "--ros-args", "--log-level", log_level],
-                parameters=[{"use_sim_time": use_sim_time}],
-            ),
-        )
+    # MTC Demo node
+    # TODO: Make the executable an argument
+    pick_place_demo = Node(
+        package="panda_mtc",
+        executable="pick_and_place_demo",
+        output="both",
+        parameters=[
+            robot_description,
+            robot_description_semantic,
+            kinematics,
+            joint_limits,
+            planning_pipeline,
+            trajectory_execution,
+            moveit_controller_manager,
+            planning_scene_monitor_parameters,
+        ],
+    )
 
-    return LaunchDescription(declared_arguments + nodes)
-
+    return LaunchDescription(declared_arguments + [pick_place_demo])
 
 def load_yaml(package_name: str, file_path: str):
     """
@@ -343,8 +230,6 @@ def parse_yaml(absolute_file_path: str):
             return yaml.safe_load(file)
     except EnvironmentError:
         return None
-
-
 def generate_declared_arguments() -> List[DeclareLaunchArgument]:
     """
     Generate list of all launch arguments that are declared for this launch script.

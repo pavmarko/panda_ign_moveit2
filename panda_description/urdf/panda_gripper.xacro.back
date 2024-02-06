@@ -21,8 +21,6 @@
   <xacro:property name="joint_finger1_type" value="prismatic"/>
   <xacro:property name="joint_finger1_origin_xyz" value="0 0 0.0584"/>
   <xacro:property name="joint_finger1_origin_rpy" value="0 0 0"/>
-  <xacro:property name="joint_fingertip1_origin_xyz" value="0 0 0.045"/>
-  <xacro:property name="joint_fingertip1_origin_rpy" value="0 0 0"/>
   <xacro:property name="joint_finger1_axis_xyz" value="0 1 0"/>
   <xacro:property name="joint_finger1_lower_limit" value="0"/>
   <xacro:property name="joint_finger1_upper_limit" value="0.04"/>
@@ -31,7 +29,6 @@
   <xacro:property name="joint_finger1_damping" value="3.0"/>
   <xacro:property name="joint_finger1_friction" value="0.4"/>
   <xacro:property name="link_finger1_name" value="leftfinger"/>
-  <xacro:property name="link_fingertip1_name" value="leftfingertip"/>
   <xacro:property name="link_finger1_mu" value="1.13"/>
   <xacro:property name="link_finger1_mesh_offset" value="0 0 0"/>
 
@@ -39,8 +36,6 @@
   <xacro:property name="joint_finger2_type" value="prismatic"/>
   <xacro:property name="joint_finger2_origin_xyz" value="0 0 0.0584"/>
   <xacro:property name="joint_finger2_origin_rpy" value="0 0 0"/>
-  <xacro:property name="joint_fingertip2_origin_xyz" value="0 0 0.045"/>
-  <xacro:property name="joint_fingertip2_origin_rpy" value="0 0 0"/>
   <xacro:property name="joint_finger2_axis_xyz" value="0 -1 0"/>
   <xacro:property name="joint_finger2_lower_limit" value="0"/>
   <xacro:property name="joint_finger2_upper_limit" value="0.04"/>
@@ -49,7 +44,6 @@
   <xacro:property name="joint_finger2_damping" value="3.0"/>
   <xacro:property name="joint_finger2_friction" value="0.4"/>
   <xacro:property name="link_finger2_name" value="rightfinger"/>
-  <xacro:property name="link_fingertip2_name" value="rightfingertip"/>
   <xacro:property name="link_finger2_mu" value="1.13"/>
   <xacro:property name="link_finger2_mesh_offset" value="0 0 ${pi}"/>
 
@@ -107,7 +101,6 @@
     joint_damping="${joint_finger1_damping}"
     joint_friction="${joint_finger1_friction}"
     gazebo_preserve_fixed_joint="${gazebo_preserve_fixed_joint}"
-    gazebo_add_FT_sensor="true"
     />
     <xacro:panda_link
     link_name="${prefix}${link_finger1_name}"
@@ -115,15 +108,6 @@
     collision="${collision}"
     mu="${link_finger1_mu}"
     mesh_offset_rpy="${link_finger1_mesh_offset}"
-    />
-    <!-- Dummy Fingertip needed for the F/T sensor -->
-    <xacro:panda_virtual_link
-    link_name="${prefix}${link_fingertip1_name}"
-    parent="${prefix}${link_finger1_name}"
-    joint_origin_xyz="${joint_fingertip1_origin_xyz}"
-    joint_origin_rpy="${joint_fingertip1_origin_rpy}"
-    gazebo_preserve_fixed_joint="true"
-    gazebo_add_FT_sensor="true"
     />
 
     <!-- Finger 2 -->
@@ -142,7 +126,6 @@
     joint_damping="${joint_finger2_damping}"
     joint_friction="${joint_finger2_friction}"
     gazebo_preserve_fixed_joint="${gazebo_preserve_fixed_joint}"
-    gazebo_add_FT_sensor="true"
     />
     <xacro:panda_link
     link_name="${prefix}${link_finger2_name}"
@@ -150,15 +133,6 @@
     collision="${collision}"
     mu="${link_finger2_mu}"
     mesh_offset_rpy="${link_finger2_mesh_offset}"
-    />
-    <!-- Dummy Fingertip needed for the F/T sensor -->
-    <xacro:panda_virtual_link
-    link_name="${prefix}${link_fingertip2_name}"
-    parent="${prefix}${link_finger2_name}"
-    joint_origin_xyz="${joint_fingertip2_origin_xyz}"
-    joint_origin_rpy="${joint_fingertip2_origin_rpy}"
-    gazebo_preserve_fixed_joint="true"
-    gazebo_add_FT_sensor="true"
     />
 
     <!-- End effector -->
