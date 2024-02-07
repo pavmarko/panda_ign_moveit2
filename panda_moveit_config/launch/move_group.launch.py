@@ -446,7 +446,7 @@ def generate_declared_arguments() -> List[DeclareLaunchArgument]:
         DeclareLaunchArgument(
             "rviz_config",
             default_value=path.join(
-                get_package_share_directory("moveit2_tutorials"),
+                get_package_share_directory("panda_moveit_config"),
                 "launch",
                 "mtc.rviz",
             ),
