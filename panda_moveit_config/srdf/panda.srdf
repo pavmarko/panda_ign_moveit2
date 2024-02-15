@@ -77,7 +77,7 @@
   <disable_collisions link1="panda_hand" link2="panda_rightfinger" reason="Adjacent"/>
   <disable_collisions link1="panda_leftfinger" link2="panda_rightfinger" reason="Default"/>
   <disable_collisions link1="panda_leftfingertip" link2="panda_rightfingertip" reason="Default"/>
-  <!--SUBGROUPS: Groups can also be formed by referencing to already defined group names-->
+  <!--SUBGROUPS Groups can also be formed by referencing to already defined group names-->
   <group name="panda_arm_hand">
     <group name="arm"/>
     <group name="gripper"/>
