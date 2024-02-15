@@ -15,7 +15,7 @@ XACRO_ARGS=(
     ros2_control:=true
     ros2_control_plugin:=ign
     ros2_control_command_interface:=effort
-    gazebo_preserve_fixed_joint:=false
+    gazebo_preserve_fixed_joint:=true
 )
 
 # Remove old SDF file

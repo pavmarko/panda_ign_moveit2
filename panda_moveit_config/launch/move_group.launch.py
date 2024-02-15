@@ -149,15 +149,15 @@ def generate_launch_description():
         "planning_pipelines": ["ompl"],
         "default_planning_pipeline": "ompl",
         "ompl": {
-            "planning_plugin": "ompl_interface/OMPLPlanner",
-            # TODO: Re-enable `default_planner_request_adapters/AddRuckigTrajectorySmoothing` once its issues are resolved
-            "request_adapters": "default_planner_request_adapters/AddTimeOptimalParameterization default_planner_request_adapters/ResolveConstraintFrames default_planner_request_adapters/FixWorkspaceBounds default_planner_request_adapters/FixStartStateBounds default_planner_request_adapters/FixStartStateCollision default_planner_request_adapters/FixStartStatePathConstraints",
-            # TODO: Reduce start_state_max_bounds_error once spawning with specific joint configuration is enabled
-            "start_state_max_bounds_error": 0.31416,
+        #     "planning_plugin": "ompl_interface/OMPLPlanner",
+        #     # TODO: Re-enable `default_planner_request_adapters/AddRuckigTrajectorySmoothing` once its issues are resolved
+        #     "request_adapters": "default_planner_request_adapters/AddTimeOptimalParameterization default_planner_request_adapters/ResolveConstraintFrames default_planner_request_adapters/FixWorkspaceBounds default_planner_request_adapters/FixStartStateBounds default_planner_request_adapters/FixStartStateCollision default_planner_request_adapters/FixStartStatePathConstraints",
+        #     # TODO: Reduce start_state_max_bounds_error once spawning with specific joint configuration is enabled
+        #     "start_state_max_bounds_error": 0.31416,
         },
     }
     _ompl_yaml = load_yaml(
-        moveit_config_package, path.join("config", "ompl_planning.yaml")
+        moveit_config_package, path.join("config", "ompl_planning_test.yaml")
     )
     planning_pipeline["ompl"].update(_ompl_yaml)
 
@@ -178,10 +178,16 @@ def generate_launch_description():
         "moveit_simple_controller_manager": moveit_controller_manager_yaml,
     }
 
+    # Load  ExecuteTaskSolutionCapability so we can execute found solutions in simulation
+    move_group_capabilities = {
+        "capabilities": "move_group/ExecuteTaskSolutionCapability"
+    }
+
     # Trajectory execution
     trajectory_execution = {
         "allow_trajectory_execution": True,
         "moveit_manage_controllers": False,
+        "trajectory_execution.trajectory_duration_monitoring": False,
         "trajectory_execution.allowed_execution_duration_scaling": 1.2,
         "trajectory_execution.allowed_goal_duration_margin": 0.5,
         "trajectory_execution.allowed_start_tolerance": 0.01,
@@ -213,7 +219,7 @@ def generate_launch_description():
             parameters=[
                 robot_description,
                 {
-                    "publish_frequency": 50.0,
+                    "publish_frequency": 100.0,
                     "frame_prefix": "",
                     "use_sim_time": use_sim_time,
                 },
@@ -255,6 +261,7 @@ def generate_launch_description():
                 robot_description_semantic,
                 kinematics,
                 joint_limits,
+                move_group_capabilities,
                 planning_pipeline,
                 trajectory_execution,
                 planning_scene_monitor_parameters,
@@ -430,13 +437,13 @@ def generate_declared_arguments() -> List[DeclareLaunchArgument]:
         # Gazebo
         DeclareLaunchArgument(
             "gazebo_preserve_fixed_joint",
-            default_value="false",
+            default_value="true",
             description="Flag to preserve fixed joints and prevent lumping when generating SDF for Gazebo.",
         ),
         # Servo
         DeclareLaunchArgument(
             "enable_servo",
-            default_value="true",
+            default_value="false",
             description="Flag to enable MoveIt2 Servo for manipulator.",
         ),
         # Miscellaneous
